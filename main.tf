@@ -13,8 +13,8 @@ resource "aws_instance" "main_server" {
 sudo apt update -y
 sudo apt install -y busybox
 mkdir -p /var/www
-echo "Hello, World from Terraform :( ." > /var/www/index.html
-nohup busybox httpd -f -p 8080 -h /var/www &
+echo "Hello, World from Terraform :) ." > /var/www/index.html
+nohup busybox httpd -f -p ${var.server_port} -h /var/www &
 EOF
     )
     
@@ -29,10 +29,21 @@ resource "aws_security_group" "network" {
   name = "inbound-network"
 
   ingress  {
-    from_port = 8080
-    to_port = 8080
+    from_port = var.server_port
+    to_port = var.server_port
     protocol = "tcp"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
 
+}
+
+variable "server_port" {
+  description = "The port the server will use for HTTP requests"
+  type = number
+  default = 8080
+}
+
+output "ec2-public-address" {
+  value = aws_instance.main_server.public_ip
+  description = "The public IP address of theweb server."
 }
