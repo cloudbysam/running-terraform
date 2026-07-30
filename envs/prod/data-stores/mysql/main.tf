@@ -14,8 +14,8 @@ resource "aws_db_instance" "database" {
   password = var.db_password
 }
 
-terraform {
-  backend "s3" {
-    key = "stage/data-stores/mysql/terraform.tfstate"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     key = "prod/data-stores/mysql/terraform.tfstate"
+#   }
+# }

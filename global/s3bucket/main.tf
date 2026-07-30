@@ -6,9 +6,9 @@ resource "aws_s3_bucket" "terraform-state" {
   bucket = "state-files-buc-aj"
 
   # Prevent accidental deletion of this bucket
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 # Enable versioning so you can see the full revision history of your state files
@@ -50,9 +50,9 @@ resource "aws_dynamodb_table" "terraform-locks" {
   }
 }
 
-terraform {
-  backend "s3" {
-    key = "global/s3/terraform.tfstate"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     key = "global/s3/terraform.tfstate"
+#   }
+# }
 
