@@ -25,11 +25,26 @@ resource "aws_security_group_rule" "allow_testing_inbound" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "allow_ssh" {
+  type              = "ingress"
+  security_group_id = module.webserver-cluster.ec2_security_group_id
+
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 output "alb_dns_name" {
   value       = module.webserver-cluster.alb-dns-name
   description = "The domain name of the load balancer"
 }
 
+# Partial configuration: remaining settings (e.g., bucket, region)
+# must be passed via '-backend-config' arguments during 'terraform init'. 
+# terraform init -backend-config="backend.hcl"
+#
+# Uncomment the block below to use the S3 backend for state storage.
 # terraform {
 #   backend "s3" {
 #     key = "stage/services/webserver-cluster/terraform.tfstate"

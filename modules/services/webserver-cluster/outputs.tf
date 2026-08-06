@@ -12,3 +12,8 @@ output "alb_security_group_id" {
   value       = aws_security_group.alb.id
   description = "The ID of the security group attached to the load balancer."
 }
+
+output "ec2_security_group_id" {
+  value = aws_security_group.network.id
+  description = "The ID of the security group attached to the ec2 launch template."
+}

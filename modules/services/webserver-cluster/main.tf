@@ -22,26 +22,28 @@ resource "aws_launch_template" "main_server" {
 
 resource "aws_security_group" "network" {
   name = "${var.cluster_name}-network"
+}
 
-  ingress {
-    from_port   = var.server_port
-    to_port     = var.server_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+resource "aws_security_group_rule" "ingress" {
+  type              = "ingress"
+  security_group_id = aws_security_group.network.id
+  
+  from_port         = var.server_port
+  to_port           = var.server_port
+  protocol          = local.tcp_protocol
+  cidr_blocks       = local.all_ips
 }
 
 resource "aws_autoscaling_group" "auto-scale" {
   # Explicitly depend on the launch templates name so each time it's replaced, this ASG is also replaced"
   name = "${var.cluster_name}-${aws_launch_template.main_server.latest_version}"
-  
-  desired_capacity = var.desired_capacity
+
+  desired_capacity    = var.desired_capacity
   max_size            = var.max_size
   min_size            = var.min_size
   vpc_zone_identifier = data.aws_subnets.default.ids
 
-   # Wait for at least this many instances to pass health checks before considering the ASG deployment complete
+  # Wait for at least this many instances to pass health checks before considering the ASG deployment complete
   min_elb_capacity = var.min_size
 
   launch_template {
@@ -49,7 +51,7 @@ resource "aws_autoscaling_group" "auto-scale" {
     version = "$Latest"
   }
 
-    # When replacing this ASG, create the replacement first, and only delete the original after
+  # When replacing this ASG, create the replacement first, and only delete the original after
   lifecycle {
     create_before_destroy = true
   }

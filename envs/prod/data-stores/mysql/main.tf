@@ -14,6 +14,10 @@ resource "aws_db_instance" "database" {
   password = var.db_password
 }
 
+# Partial configuration: remaining settings (e.g., bucket, region)
+# must be passed via '-backend-config' arguments during 'terraform init'.
+#
+# Uncomment the block below to use the S3 backend for state storage.
 # terraform {
 #   backend "s3" {
 #     key = "prod/data-stores/mysql/terraform.tfstate"

@@ -9,24 +9,24 @@ module "webserver-cluster" {
   db_remote_state_bucket = "state-files-buc-aj"
   db_remote_state_key    = "prod/data-stores/mysql/terraform.tfstate"
 
-  instance_type = "t2.micro"
+  instance_type    = "t2.micro"
   desired_capacity = 2
-  min_size = 2
-  max_size = 4
+  min_size         = 2
+  max_size         = 4
 }
 
 resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
   scheduled_action_name  = "scale_out_during_business_hours"
   min_size               = 2
   max_size               = 4
-  desired_capacity       = 4
+  desired_capacity       = 2
   recurrence             = "0 9 * * *"
   autoscaling_group_name = module.webserver-cluster.asg_name
 }
 
 resource "aws_autoscaling_schedule" "scale_in_at_night" {
   scheduled_action_name  = "scale_in_at_night"
-  min_size               = 2
+  min_size               = 1
   max_size               = 2
   desired_capacity       = 2
   recurrence             = "0 17 * * *"
@@ -38,6 +38,10 @@ output "alb_dns_name" {
   description = "The domain name of the load balancer"
 }
 
+# Partial configuration: remaining settings (e.g., bucket, region)
+# must be passed via '-backend-config' arguments during 'terraform init'.
+#
+# Uncomment the block below to use the S3 backend for state storage.
 # terraform {
 #   backend "s3" {
 #     key = "prod/services/webserver-cluster/terraform.tfstate"
