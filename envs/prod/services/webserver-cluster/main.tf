@@ -13,6 +13,11 @@ module "webserver-cluster" {
   desired_capacity = 2
   min_size         = 2
   max_size         = 4
+
+  custom_tags = {
+    Owner     = "team-sam"
+    ManagedBy = "terraform"
+  }
 }
 
 resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {

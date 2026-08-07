@@ -38,3 +38,9 @@ variable "desired_capacity" {
   description = "The desired number of EC2 instabces to run"
   type        = number
 }
+
+variable "custom_tags" {
+  description = "Custom tags to set on the instances in the ASG"
+  type        = map(string)
+  default     = {}
+}
