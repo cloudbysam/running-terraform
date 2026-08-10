@@ -82,6 +82,29 @@ resource "aws_autoscaling_group" "auto-scale" {
   }
 }
 
+resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
+  scheduled_action_name  = "scale_out_during_business_hours"
+  count = var.enable_autoscaling ? 1 : 0
+
+  min_size               = 2
+  max_size               = 4
+  desired_capacity       = 2
+  recurrence             = "0 9 * * *"
+  autoscaling_group_name = aws_autoscaling_group.auto-scale.name
+}
+
+resource "aws_autoscaling_schedule" "scale_in_at_night" {
+  scheduled_action_name  = "scale_in_at_night"
+  count = var.enable_autoscaling ? 1 : 0
+
+  min_size               = 1
+  max_size               = 2
+  desired_capacity       = 2
+  recurrence             = "0 17 * * *"
+  autoscaling_group_name = aws_autoscaling_group.auto-scale.name
+}
+
+
 resource "aws_lb" "load-balancer" {
   name               = "${var.cluster_name}-terraform-load"
   load_balancer_type = "application"
@@ -141,7 +164,7 @@ resource "aws_lb_target_group" "asg" {
     protocol            = "HTTP"
     matcher             = "200"
     interval            = 15
-    timeout             = 3
+    timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
