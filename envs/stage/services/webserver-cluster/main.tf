@@ -6,13 +6,15 @@ module "webserver-cluster" {
   source = "C:/Users/samue/AWS/Running-Terraform/modules/services/webserver-cluster"
 
   cluster_name           = "stage"
+  server_text            = "Let's try: Hello, this is a test for zero downtime deployment."
   db_remote_state_bucket = "state-files-buc-aj"
   db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 
-  instance_type    = "t2.micro"
-  desired_capacity = 1
-  min_size         = 1
-  max_size         = 2
+  instance_type      = "t2.micro"
+  desired_capacity   = 2
+  min_size           = 2
+  max_size           = 4
+  enable_autoscaling = false
 }
 
 resource "aws_security_group_rule" "allow_testing_inbound" {

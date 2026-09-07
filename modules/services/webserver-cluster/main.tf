@@ -1,6 +1,6 @@
 resource "aws_launch_template" "main_server" {
   name_prefix   = "${var.cluster_name}-"
-  image_id      = "ami-0b6d9d3d33ba97d99"
+  image_id      = var.ami
   instance_type = var.instance_type
 
   network_interfaces {
@@ -12,6 +12,7 @@ resource "aws_launch_template" "main_server" {
     DB_ADDRESS  = data.terraform_remote_state.db.outputs.address,
     DB_PORT     = data.terraform_remote_state.db.outputs.port,
     SERVER_PORT = var.server_port
+    SERVER_TEXT = var.server_text
   }))
 
   # Required when using a launch configuration with an auto scaling group.
@@ -61,7 +62,7 @@ resource "aws_autoscaling_group" "auto-scale" {
 
   # Changes health check tracking from standard EC2 to the Load Balancer
   health_check_type         = "ELB"
-  health_check_grace_period = 60
+  health_check_grace_period = 300
 
   capacity_rebalance = true
 
@@ -80,11 +81,19 @@ resource "aws_autoscaling_group" "auto-scale" {
       propagate_at_launch = true
     }
   }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      instance_warmup = 300
+      min_healthy_percentage = 90
+    }
+  }
 }
 
 resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
-  scheduled_action_name  = "scale_out_during_business_hours"
-  count = var.enable_autoscaling ? 1 : 0
+  scheduled_action_name = "scale_out_during_business_hours"
+  count                 = var.enable_autoscaling ? 1 : 0
 
   min_size               = 2
   max_size               = 4
@@ -94,8 +103,8 @@ resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
 }
 
 resource "aws_autoscaling_schedule" "scale_in_at_night" {
-  scheduled_action_name  = "scale_in_at_night"
-  count = var.enable_autoscaling ? 1 : 0
+  scheduled_action_name = "scale_in_at_night"
+  count                 = var.enable_autoscaling ? 1 : 0
 
   min_size               = 1
   max_size               = 2
@@ -163,10 +172,10 @@ resource "aws_lb_target_group" "asg" {
     path                = "/"
     protocol            = "HTTP"
     matcher             = "200"
-    interval            = 15
+    interval            = 30
     timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
   }
 }
 
