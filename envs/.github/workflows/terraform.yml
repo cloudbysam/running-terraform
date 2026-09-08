@@ -1,0 +1,39 @@
+name: Terraform Apply
+
+# Only run the workflows on commit to the main branch
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  TerraformApply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Authenticate to AWS using OIDC
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          # REPLACE THIS with your actual AWS Role ARN once created by Terraform
+          role-to-assume: arn:aws:iam::662829279164:role/github-actions-terraform-role  #arn:aws:iam::123456789012:role/your-github-actions-role
+          aws-region: us-east-1
+
+      # Install Terraform on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.0
+          terraform_wrapper: false
+
+      # Execute commands in a separate step
+      - name: Terraform Init and Apply
+        run: |
+          terraform init
+          terraform apply -auto-approve
