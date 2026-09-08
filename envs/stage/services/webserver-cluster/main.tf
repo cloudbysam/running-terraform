@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "webserver-cluster" {
-  source = "C:/Users/samue/AWS/Running-Terraform/modules/services/webserver-cluster"
+  source = "../../../../modules/services/webserver-cluster"
 
   cluster_name           = "stage"
   server_text            = "Let's try: Hello, this is a test for zero downtime deployment."
