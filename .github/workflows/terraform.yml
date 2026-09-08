@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: Multi-Component Staging Deployment
 
 # Only run the workflows on commit to the main branch
 on:
@@ -35,14 +35,33 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.5.0
+          terraform_version: 1.10.0
           terraform_wrapper: false
 
-      - name: Terraform Init and Apply
+      # ------------------------------------------------------------------
+      # STEP 1: DEPLOY THE DATABASE FIRST (Dependency)
+      # ------------------------------------------------------------------
+      # The database must exist before the webservers boot up, otherwise 
+      # the webserver remote state lookup tool will crash.
+      # ------------------------------------------------------------------    
+
+      - name: Initialize and Apply Database
         env:
           TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }} # Map secret securely
           TF_VAR_db_username: "admin" # Admin username can be hardcoded or set as a secret too
         run: |
-          terraform init
-          terraform apply -var-file="dev.tfvars" -auto-approve
+          terraform -chdir=envs/stage/data-stores/mysql init -backend-config="backend.hcl"
+          terraform -chdir=envs/stage/data-stores/mysql apply -auto-approve
+      
 
+      # ------------------------------------------------------------------
+      # STEP 2: DEPLOY THE WEBSERVER CLUSTER SECOND
+      # ------------------------------------------------------------------
+      # Once the database successfully deploys, its state is pushed to S3. 
+      # This step then reads that state file to bind the application cluster.
+      # ------------------------------------------------------------------
+      
+      - name: Initialize and Apply Webservers
+        run: |
+          terraform -chdir=envs/stage/services/webserver-cluster init -backend-config="backend.hcl"
+          terraform -chdir=envs/stage/services/webserver-cluster apply -auto-approve   
