@@ -57,6 +57,46 @@ import {
   id = "arn:aws:elasticloadbalancing:us-east-1:662829279164:targetgroup/stage-target-group/5d965c912ca0aac0" 
 }
 
+# 1. Import the standalone Security Group Rules from your root main.tf
+import {
+  to = aws_security_group_rule.allow_testing_inbound
+  id = "sg-0e20cb37140abe757_ingress_tcp_12345_12345_0.0.0.0/0"
+}
+
+import {
+  to = aws_security_group_rule.allow_ssh
+  id = "sg-0d93e40d345240598_ingress_tcp_22_22_0.0.0.0/0"
+}
+
+# 2. Import the internal Module Security Group Rules
+import {
+  to = module.webserver-cluster.aws_security_group_rule.ingress
+  id = "sg-0d93e40d345240598_ingress_tcp_8080_8080_0.0.0.0/0"
+}
+
+import {
+  to = module.webserver-cluster.aws_security_group_rule.allow_http_inbound
+  id = "sg-0e20cb37140abe757_ingress_tcp_80_80_0.0.0.0/0"
+}
+
+import {
+  to = module.webserver-cluster.aws_security_group_rule.allow_all_outbound
+  id = "sg-0e20cb37140abe757_egress_all_0_0_0.0.0.0/0" 
+}
+
+# 3. Import the Auto Scaling Group
+import {
+  to = module.webserver-cluster.aws_autoscaling_group.auto-scale
+  id = "stage-1" 
+}
+
+# 4. Import the Application Load Balancer
+import {
+  to = module.webserver-cluster.aws_lb.load-balancer
+  id = "arn:aws:elasticloadbalancing:us-east-1:662829279164:loadbalancer/app/stage-terraform-load/2adc094f6c96f9f8" 
+}
+
+
 # Partial configuration: remaining settings (e.g., bucket, region)
 # must be passed via '-backend-config' arguments during 'terraform init'. 
 # terraform init -backend-config="backend.hcl"
