@@ -34,7 +34,7 @@ jobs:
       # ------------------------------------------------------------------
       - name: Destroy Webservers
         run: |
-          cd envs/stage/services/webservercluster
+          cd envs/stage/services/webserver-cluster
           terraform init -backend-config="backend.hcl"
           terraform destroy -auto-approve
 
