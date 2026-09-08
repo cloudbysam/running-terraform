@@ -1,10 +1,22 @@
 name: Multi-Component Staging Deployment
 
-# Only run the workflows on commit to the main branch
+# ==================================================================
+#  PIPELINE TRIGGER CONTROL PANEL
+# ==================================================================
+# To activate a mode, UNCOMMENT it. To deactivate, COMMENT it out (#).
+# Make sure only ONE mode is active at a time!
+# ==================================================================
+
+# MODE A: MANUAL DEPLOYMENT (Click button on GitHub.com)
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+
+#  MODE B: AUTOMATED CI/CD (Deploys instantly on git push)
+# on:
+#   push:
+#     branches:
+#       - main
+# ==================================================================
 
 permissions:
   id-token: write
