@@ -14,11 +14,6 @@ jobs:
   TerraformApply:
     runs-on: ubuntu-latest
 
-     # THIS TELLS GITHUB TO RUN ALL COMMANDS INSIDE ENVS/STAGE FOLDER
-    defaults:
-      run:
-        working-directory: ./envs/stage
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
