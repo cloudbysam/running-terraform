@@ -59,6 +59,6 @@ jobs:
       
       - name: Initialize and Apply Webservers
         run: |
-          cd envs/stage/services/webservercluster
+          cd envs/stage/services/webserver-cluster
           terraform init -backend-config="backend.hcl"
           terraform apply -auto-approve
