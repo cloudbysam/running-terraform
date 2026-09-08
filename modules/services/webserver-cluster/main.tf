@@ -37,7 +37,7 @@ resource "aws_security_group_rule" "ingress" {
 
 resource "aws_autoscaling_group" "auto-scale" {
   # Explicitly depend on the launch templates name so each time it's replaced, this ASG is also replaced"
-  name = "${var.cluster_name}-${aws_launch_template.main_server.latest_version}"
+  name_prefix = "${var.cluster_name}-"
 
   desired_capacity    = var.desired_capacity
   max_size            = var.max_size
