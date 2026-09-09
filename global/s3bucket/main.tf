@@ -43,8 +43,8 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 # must be passed via '-backend-config' arguments during 'terraform init'.
 #
 # Uncomment the block below to use the S3 backend for state storage.
-terraform {
-  backend "s3" {
-    key = "global/s3/terraform.tfstate"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     key = "global/s3/terraform.tfstate"
+#   }
+# }
