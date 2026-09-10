@@ -9,6 +9,8 @@ module "webserver-cluster" {
   db_remote_state_bucket = "state-files-buc-aj"
   db_remote_state_key    = "prod/data-stores/mysql/terraform.tfstate"
 
+  server_text = "Welcome to Version 2.0! Running live with Zero-Downtime and CloudWatch Monitoring enabled!"
+
   instance_type      = "t2.micro"
   desired_capacity   = 1
   min_size           = 1
