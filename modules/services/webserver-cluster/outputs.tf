@@ -22,3 +22,8 @@ output "route53_name_servers" {
   value       = aws_route53_zone.primary[*].name_servers
   description = "The 4 AWS Name Servers to copy and paste into NameCheap"
 }
+
+output "cloudfront_dns_name" {
+  value       = aws_cloudfront_distribution.cdn.domain_name
+  description = "The global domain name assigned to your CloudFront distribution"
+}

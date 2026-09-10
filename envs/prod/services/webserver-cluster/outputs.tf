@@ -7,3 +7,8 @@ output "name_servers_for_namecheap" {
   value       = module.webserver-cluster.route53_name_servers
   description = "Copy these 4 name servers and paste them into custom DNS settings on NameCheap"
 }
+
+output "cloudfront_domain" {
+  value       = module.webserver-cluster.cloudfront_dns_name
+  description = "CloudFront distribution domain name"
+}

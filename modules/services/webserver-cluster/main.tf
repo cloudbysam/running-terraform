@@ -203,6 +203,68 @@ resource "aws_route53_zone" "primary" {
   name  = var.domain_name
 }
 
+# ------------------------------------------------------------------
+# CLOUDFRONT CDN DISTRIBUTION BLUEPRINT
+# ------------------------------------------------------------------
+resource "aws_cloudfront_distribution" "cdn" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "${var.cluster_name} CDN for Webserver Cluster ALB"
+  price_class         = "PriceClass_100" # Uses North America and Europe edge locations 
+
+  # 1. Connect CloudFront directly to existing ALB
+  origin {
+    domain_name = aws_lb.load-balancer.dns_name
+    origin_id   = "ALB-${var.cluster_name}"
+
+    custom_origin_config {
+      http_port                = 80
+      https_port               = 443
+      origin_protocol_policy   = "http-only" 
+      origin_ssl_protocols     = ["TLSv1.2"]
+    }
+  }
+
+  # 2. Configure How Assets Are Cached
+  default_cache_behavior {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "ALB-${var.cluster_name}"
+
+    forwarded_values {
+      query_string = true
+      headers      = ["Host", "Authorization"] # Forwards host header cleanly to the ALB
+
+      cookies {
+        forward = "all"
+      }
+    }
+
+    # Redirects any HTTP requests to secure HTTPS at the edge locations automatically
+    viewer_protocol_policy = "redirect-to-https" 
+    min_ttl                = 0
+    default_ttl            = 3600  # Caches assets for 1 hour by default
+    max_ttl                = 86400
+  }
+
+  # 3. Open globally (No geographical blocklists)
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  # 4. Use the default standard cloudfront.net SSL certificate for security
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+
+  tags = {
+    Environment = var.cluster_name
+  }
+}
+
+
 data "aws_vpc" "default" {
   default = true
 }
