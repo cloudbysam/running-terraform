@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-module "mysql_databas" {
+module "mysql_database" {
   source = "../../../../modules/data-stores/mysql"
   db_name = "aws_database_stage"
   instance_class    = "db.t3.micro"
