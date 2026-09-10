@@ -4,7 +4,7 @@ provider "aws" {
 
 module "mysql_database" {
   source = "../../../../modules/data-stores/mysql"
-  db_name = "aws-database-stage"
+  db_name = "StageDb"
   instance_class    = "db.t3.micro"
   allocated_storage = 10
 
