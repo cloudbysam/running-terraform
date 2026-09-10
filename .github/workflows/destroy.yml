@@ -1,8 +1,17 @@
-name: Terraform Destroy Staging
+name: Dynamic Terraform Destroy
 
 # This makes it a manual button in GitHub to prevent from accidentally destroying resources!
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to DESTROY'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - prod
 
 permissions:
   id-token: write
@@ -34,7 +43,7 @@ jobs:
       # ------------------------------------------------------------------
       - name: Destroy Webservers
         run: |
-          cd envs/stage/services/webserver-cluster
+          cd envs/${{ github.event.inputs.environment }}/services/webserver-cluster
           terraform init -backend-config="backend.hcl"
           terraform destroy -auto-approve
 
@@ -46,6 +55,6 @@ jobs:
           TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
           TF_VAR_db_username: "admin"
         run: |
-          cd envs/stage/data-stores/mysql
+          cd envs/${{ github.event.inputs.environment }}/data-stores/mysql
           terraform init -backend-config="backend.hcl"
           terraform destroy -auto-approve
