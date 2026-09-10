@@ -203,6 +203,21 @@ resource "aws_route53_zone" "primary" {
   name  = var.domain_name
 }
 
+resource "aws_route53_record" "root_domain" {
+  count   = var.enable_route53 ? 1 : 0
+
+  # 2. Direct internal referencing (No 'module.' prefix!)
+  zone_id = aws_route53_zone.primary[0].zone_id 
+  name    = var.domain_name  
+  type    = "A"              
+
+  alias {
+    name                   = aws_lb.load-balancer.dns_name
+    zone_id                = aws_lb.load-balancer.zone_id
+    evaluate_target_health = true
+  }
+}
+
 # ------------------------------------------------------------------
 # CLOUDFRONT CDN DISTRIBUTION BLUEPRINT
 # ------------------------------------------------------------------
