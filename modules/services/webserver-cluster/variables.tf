@@ -61,3 +61,14 @@ variable "server_text" {
   type        = string
   default     = "Hello, World"
 }
+
+variable "enable_route53" {
+  type        = bool
+  description = "If true, create Route 53 DNS records and hosted zones for the cluster"
+}
+
+variable "domain_name" {
+  type        = string
+  default     = ""
+  description = "The domain name purchased from NameCheap."
+}

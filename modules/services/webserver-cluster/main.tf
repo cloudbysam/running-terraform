@@ -195,6 +195,14 @@ resource "aws_lb_listener_rule" "listener-rule" {
   }
 }
 
+# Create the Route 53 Hosted Zone for  domain name
+resource "aws_route53_zone" "primary" {
+  # Only build this if enable_route53 is true (Production)
+  count = var.enable_route53 ? 1 : 0
+
+  name  = var.domain_name
+}
+
 data "aws_vpc" "default" {
   default = true
 }

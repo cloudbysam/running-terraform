@@ -17,3 +17,8 @@ output "ec2_security_group_id" {
   value       = aws_security_group.network.id
   description = "The ID of the security group attached to the ec2 launch template."
 }
+
+output "route53_name_servers" {
+  value       = aws_route53_zone.primary[*].name_servers
+  description = "The 4 AWS Name Servers to copy and paste into NameCheap"
+}

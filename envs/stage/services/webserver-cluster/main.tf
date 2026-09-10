@@ -15,6 +15,10 @@ module "webserver-cluster" {
   min_size           = 2
   max_size           = 4
   enable_autoscaling = false
+
+  # Turn off Route 53 for Staging
+  enable_route53 = false
+  domain_name    = "" 
 }
 
 resource "aws_security_group_rule" "allow_testing_inbound" {

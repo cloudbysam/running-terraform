@@ -15,16 +15,17 @@ module "webserver-cluster" {
   max_size           = 4
   enable_autoscaling = true
 
+  # Turn on Route 53 for Production 
+  enable_route53 = true
+  domain_name    = "awswithsam.site " 
+
+
   custom_tags = {
     Owner     = "team-sam"
     ManagedBy = "terraform"
   }
 }
 
-output "alb_dns_name" {
-  value       = module.webserver-cluster.alb-dns-name
-  description = "The domain name of the load balancer"
-}
 
 # Partial configuration: remaining settings (e.g., bucket, region)
 # must be passed via '-backend-config' arguments during 'terraform init'.
