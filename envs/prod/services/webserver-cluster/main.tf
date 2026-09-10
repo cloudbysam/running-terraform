@@ -10,14 +10,14 @@ module "webserver-cluster" {
   db_remote_state_key    = "prod/data-stores/mysql/terraform.tfstate"
 
   instance_type      = "t2.micro"
-  desired_capacity   = 2
-  min_size           = 2
+  desired_capacity   = 1
+  min_size           = 1
   max_size           = 4
   enable_autoscaling = true
 
   # Turn on Route 53 for Production 
   enable_route53 = true
-  domain_name    = "awswithsam.site " 
+  domain_name    = "awswithsam.site" 
 
 
   custom_tags = {
