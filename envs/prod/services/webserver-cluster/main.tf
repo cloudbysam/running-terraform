@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "webserver-cluster" {
-  source = "C:/Users/samue/AWS/Running-Terraform/modules/services/webserver-cluster"
+  source = "../../../../modules/services/webserver-cluster"
 
   cluster_name           = "prod"
   db_remote_state_bucket = "state-files-buc-aj"
