@@ -30,8 +30,8 @@ output "alb_dns_name" {
 # must be passed via '-backend-config' arguments during 'terraform init'.
 #
 # Uncomment the block below to use the S3 backend for state storage.
-# terraform {
-#   backend "s3" {
-#     key = "prod/services/webserver-cluster/terraform.tfstate"
-#   }
-# }
+terraform {
+  backend "s3" {
+    key = "prod/services/webserver-cluster/terraform.tfstate"
+  }
+}

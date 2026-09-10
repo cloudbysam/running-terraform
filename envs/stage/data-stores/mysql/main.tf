@@ -2,16 +2,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_db_instance" "database" {
-  identifier_prefix   = "database-instance"
-  engine              = "mysql"
-  allocated_storage   = 10
-  instance_class      = "db.t3.micro"
-  skip_final_snapshot = true
-  db_name             = "aws_database"
+module "mysql_databas" {
+  source = "../../../../modules/data-stores/mysql"
+  db_name = "aws_database_stage"
+  instance_class    = "db.t3.micro"
+  allocated_storage = 10
 
-  username = var.db_username
-  password = var.db_password
+  db_username = var.db_username
+  db_password = var.db_password
 }
 
 # Partial configuration: remaining settings (e.g., bucket, region)

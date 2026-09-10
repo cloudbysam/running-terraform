@@ -48,8 +48,8 @@ output "alb_dns_name" {
 # terraform init -backend-config="backend.hcl"
 #
 # Uncomment the block below to use the S3 backend for state storage.
-# terraform {
-#   backend "s3" {
-#     key = "stage/services/webserver-cluster/terraform.tfstate"
-#   }
-# }
+terraform {
+  backend "s3" {
+    key = "stage/services/webserver-cluster/terraform.tfstate"
+  }
+}

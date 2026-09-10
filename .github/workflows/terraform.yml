@@ -1,22 +1,16 @@
-name: Multi-Component Staging Deployment
+name: Infrastructure Deployment Control Deck
 
-# ==================================================================
-#  PIPELINE TRIGGER CONTROL PANEL
-# ==================================================================
-# To activate a mode, UNCOMMENT it. To deactivate, COMMENT it out (#).
-# Make sure only ONE mode is active at a time!
-# ==================================================================
-
-# MODE A: MANUAL DEPLOYMENT (Click button on GitHub.com)
 on:
   workflow_dispatch:
-
-#  MODE B: AUTOMATED CI/CD (Deploys instantly on git push)
-# on:
-#   push:
-#     branches:
-#       - main
-# ==================================================================
+    inputs:
+      environment:
+        description: 'Select Target Environment'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - prod
 
 permissions:
   id-token: write
@@ -57,7 +51,7 @@ jobs:
           TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }} # Map secret securely
           TF_VAR_db_username: "admin" # Admin username can be hardcoded or set as a secret too
         run: |
-          cd envs/stage/data-stores/mysql
+          cd envs/${{ github.event.inputs.environment }}/data-stores/mysql
           terraform init -backend-config="backend.hcl"
           terraform apply -auto-approve
       
@@ -71,6 +65,6 @@ jobs:
       
       - name: Initialize and Apply Webservers
         run: |
-          cd envs/stage/services/webserver-cluster
+          cd envs/${{ github.event.inputs.environment }}/services/webserver-cluster
           terraform init -backend-config="backend.hcl"
           terraform apply -auto-approve
